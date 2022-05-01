@@ -3,23 +3,22 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 require('dotenv').config()
 const app = express()
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 app.use(cors())
 app.use(express.json())
-// shahil
-// esP4VSY2bXsclPaL
-
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://shahil:esP4VSY2bXsclPaL@cluster0.63ras.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.63ras.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function run() {
     try {
         await client.connect()
         const productCollection = client.db('Gadget-collections').collection('products')
-
+        app.get('/', (req, res) => {
+            res.send({ name: "running port 5000" })
+        })
         // ------------ POST Products to database
         app.post('/product', async (req, res) => {
             const product = req.body;
@@ -68,9 +67,7 @@ function verifyToken(token) {
     return email;
 };
 
-app.get('/', (req, res) => {
-    res.send({ name: "kader ali" })
-})
+
 
 app.listen(port, () => {
     console.log(`listening ${port}`);
